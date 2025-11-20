@@ -37,6 +37,15 @@ import { RequirePermission } from '@backstage/plugin-permission-react';
 import { catalogEntityCreatePermission } from '@backstage/plugin-catalog-common/alpha';
 import { NotificationsPage } from '@backstage/plugin-notifications';
 import { SignalsDisplay } from '@backstage/plugin-signals';
+import { githubAuthApiRef } from '@backstage/core-plugin-api';
+import { SignInProviderConfig, SignInPage } from '@backstage/core-components';
+
+ const githubProvider = {
+  id: 'github-auth-provider',
+  title:'GitHub',
+  message:'Sign in using GitHub',
+  apiRef: githubAuthApiRef,
+};
 
 const app = createApp({
   apis,
@@ -58,7 +67,8 @@ const app = createApp({
     });
   },
   components: {
-    SignInPage: props => <SignInPage {...props} auto providers={['guest']} />,
+
+    SignInPage: props => <SignInPage {...props} auto providers={githubProvider} />,
   },
 });
 
@@ -75,38 +85,4 @@ const routes = (
     <Route path="/docs" element={<TechDocsIndexPage />} />
     <Route
       path="/docs/:namespace/:kind/:name/*"
-      element={<TechDocsReaderPage />}
-    >
-      <TechDocsAddons>
-        <ReportIssue />
-      </TechDocsAddons>
-    </Route>
-    <Route path="/create" element={<ScaffolderPage />} />
-    <Route path="/api-docs" element={<ApiExplorerPage />} />
-    <Route
-      path="/catalog-import"
-      element={
-        <RequirePermission permission={catalogEntityCreatePermission}>
-          <CatalogImportPage />
-        </RequirePermission>
-      }
-    />
-    <Route path="/search" element={<SearchPage />}>
-      {searchPage}
-    </Route>
-    <Route path="/settings" element={<UserSettingsPage />} />
-    <Route path="/catalog-graph" element={<CatalogGraphPage />} />
-    <Route path="/notifications" element={<NotificationsPage />} />
-  </FlatRoutes>
-);
-
-export default app.createRoot(
-  <>
-    <AlertDisplay />
-    <OAuthRequestDialog />
-    <SignalsDisplay />
-    <AppRouter>
-      <Root>{routes}</Root>
-    </AppRouter>
-  </>,
-);
+      element={<TechDocsReaderPage />} > <TechDocsAddons> <ReportIssue /> </TechDocsAddons> </Route> <Route path="/create" element={<ScaffolderPage />} /> <Route path="/api-docs" element={<ApiExplorerPage />} /> <Route path="/catalog-import" element={ <RequirePermission permission={catalogEntityCreatePermission}> <CatalogImportPage /> </RequirePermission> } /> <Route path="/search" element={<SearchPage />}> {searchPage} </Route> <Route path="/settings" element={<UserSettingsPage />} /> <Route path="/catalog-graph" element={<CatalogGraphPage />} /> <Route path="/notifications" element={<NotificationsPage />} /> </FlatRoutes>); export default app.createRoot( <> <AlertDisplay /> <OAuthRequestDialog /> <SignalsDisplay /> <AppRouter> <Root>{routes}</Root> </AppRouter> </>,);
